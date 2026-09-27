@@ -49,6 +49,7 @@ Les variables principales sont :
 | `INFLUXDB_BUCKET` | bucket InfluxDB |
 | `WEATHER_CSV` | chemin optionnel vers les données météo 2024 |
 | `SIMULATION_INITIAL_TEMPERATURE` | température initiale, 20 °C par défaut |
+| `SIMULATION_STEP_SECONDS` | pas de calcul, 10 secondes par défaut |
 
 Le CSV météo doit contenir au minimum deux colonnes :
 
@@ -76,7 +77,7 @@ WEATHER_CSV=/data/weather_2024_luz_saint_sauveur.csv
 
 ## Fonctionnement thermique
 
-Le calcul est exécuté toutes les minutes en temps réel. Le scénario continue
+Le calcul est exécuté toutes les 10 secondes en temps réel. Le scénario continue
 jusqu'à un arrêt manuel depuis l'interface. Le modèle utilise une capacité
 thermique et un coefficient de pertes par pièce, avec un échange simplifié
 entre la chambre étage et la chambre RDC/SDB.
@@ -107,3 +108,23 @@ Les mesures sont écrites dans l'instance externe lorsqu'elle est configurée :
 
 Une indisponibilité InfluxDB ne stoppe pas la simulation ; l'erreur est
 visible dans l'interface et les nouvelles mesures seront réessayées.
+
+## Déploiement TrueNAS
+
+Depuis une tâche Shell ou un terminal TrueNAS, récupérer la release puis
+préparer la configuration :
+
+```sh
+git clone --branch v0.1.0 https://github.com/freakstreet/FreakyDomos-Thermal_Simulator.git
+cd FreakyDomos-Thermal_Simulator
+cp .env.example .env
+vi .env
+docker compose up -d --build
+```
+
+Dans `.env`, renseigner l'adresse IP du master NET et les paramètres de
+l'instance InfluxDB externe. Le port web publié est `8090` par défaut. La
+page est ensuite accessible sur `http://ADRESSE_TRUENAS:8090/`.
+
+Le dossier `data/` est monté en lecture seule dans le conteneur afin de
+conserver les données météo fournies avec la release.
