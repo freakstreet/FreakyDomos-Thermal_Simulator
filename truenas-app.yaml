@@ -1,9 +1,9 @@
 # NET Thermal Simulator - TrueNAS SCALE Custom App
 #
 # Avant l'installation :
-# 1. Créer le dataset /mnt/tank/apps/freakydomos-thermal-simulator/data
-# 2. Remplacer les valeurs TODO ci-dessous.
-# 3. Adapter /mnt/tank au nom réel de votre pool TrueNAS.
+# 1. Remplacer les valeurs TODO ci-dessous.
+# 2. Adapter /mnt/tank au nom réel de votre pool TrueNAS si vous ajoutez
+#    ensuite des volumes persistants.
 #
 # L'image est publiée par GitHub Container Registry par la release v0.2.0.
 
@@ -26,12 +26,7 @@ services:
       INFLUXDB_TOKEN: "TODO_TOKEN_INFLUXDB"
       INFLUXDB_ORG: "TODO_ORGANISATION"
       INFLUXDB_BUCKET: "FreakyDomos"
-      WEATHER_CSV: "/data/weather_2024_luz_saint_sauveur.csv"
+      WEATHER_CSV: "/app/data/weather_2024_luz_saint_sauveur.csv"
       SIMULATION_INITIAL_TEMPERATURE: "20"
       SIMULATION_STEP_SECONDS: "10"
       WEB_PORT: "8090"
-    volumes:
-      - type: bind
-        source: /mnt/tank/apps/freakydomos-thermal-simulator/data
-        target: /data
-        read_only: true

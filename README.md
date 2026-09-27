@@ -112,9 +112,8 @@ visible dans l'interface et les nouvelles mesures seront réessayées.
 ## Déploiement TrueNAS
 
 Pour une installation depuis l'écran **Apps > Discover > Custom App** de
-TrueNAS SCALE, utiliser le fichier `truenas-app.yaml`. Créer d'abord le
-dataset `/mnt/tank/apps/freakydomos-thermal-simulator/data`, puis adapter le
-pool et les variables marquées `TODO` avant de coller le YAML.
+TrueNAS SCALE, utiliser le fichier `truenas-app.yaml`, puis adapter les
+variables marquées `TODO` avant de coller le YAML.
 
 Le fichier utilise l'image publiée par GitHub Container Registry et ne
 nécessite donc pas de compilation sur TrueNAS.
@@ -134,5 +133,6 @@ Dans `.env`, renseigner l'adresse IP du master NET et les paramètres de
 l'instance InfluxDB externe. Le port web publié est `8090` par défaut. La
 page est ensuite accessible sur `http://ADRESSE_TRUENAS:8090/`.
 
-Le dossier `data/` est monté en lecture seule dans le conteneur afin de
-conserver les données météo fournies avec la release.
+Les données météo 2024 sont incluses dans l'image Docker et sont lues depuis
+`/app/data/weather_2024_luz_saint_sauveur.csv`. Aucun volume météo n'est
+nécessaire pour le déploiement TrueNAS.
