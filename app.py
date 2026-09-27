@@ -21,7 +21,10 @@ class State:
     def __init__(self) -> None:
         initial = float(os.getenv("SIMULATION_INITIAL_TEMPERATURE", "20"))
         self.model = ThermalModel(initial)
-        self.weather = WeatherSeries(os.getenv("WEATHER_CSV", ""))
+        configured_weather = os.getenv("WEATHER_CSV", "").strip()
+        bundled_weather = ROOT / "data" / "weather_2024_luz_saint_sauveur.csv"
+        weather_path = configured_weather if configured_weather and Path(configured_weather).exists() else str(bundled_weather)
+        self.weather = WeatherSeries(weather_path)
         self.influx = InfluxWriter()
         self.device = NetDevice(self.model)
         self.step_seconds = max(1.0, float(os.getenv("SIMULATION_STEP_SECONDS", "10")))

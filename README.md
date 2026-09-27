@@ -135,4 +135,6 @@ page est ensuite accessible sur `http://ADRESSE_TRUENAS:8090/`.
 
 Les données météo 2024 sont incluses dans l'image Docker et sont lues depuis
 `/app/data/weather_2024_luz_saint_sauveur.csv`. Aucun volume météo n'est
-nécessaire pour le déploiement TrueNAS.
+nécessaire pour le déploiement TrueNAS. Si `WEATHER_CSV` pointe vers un ancien
+chemin inexistant, l'application revient automatiquement vers ce fichier
+embarqué.
