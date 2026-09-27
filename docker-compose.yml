@@ -1,0 +1,13 @@
+services:
+  net-thermal-simulator:
+    build: .
+    container_name: net-thermal-simulator
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "${WEB_PORT:-8090}:8090"
+    volumes:
+      - ./data:/data:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
