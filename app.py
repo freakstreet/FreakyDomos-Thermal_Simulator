@@ -35,6 +35,8 @@ class State:
         self.last_step: str | None = None
         self.last_influx_ok = False
         self.history: list[dict] = []
+        self.scenario_elapsed_seconds = 0.0
+        self.heater_on_seconds = 0.0
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._loop, name="thermal-clock", daemon=True)
 
@@ -48,6 +50,9 @@ class State:
 
     def set_running(self, running: bool) -> None:
         with self.lock:
+            if running and not self.running:
+                self.scenario_elapsed_seconds = 0.0
+                self.heater_on_seconds = 0.0
             self.running = running
             if running:
                 self.started_at = dt.datetime.now(dt.timezone.utc).isoformat()
@@ -64,6 +69,9 @@ class State:
                 self.selected_time += dt.timedelta(seconds=self.step_seconds)
                 outside = self.weather.value_at(self.selected_time)
                 self.model.step(outside, dt_seconds=self.step_seconds)
+                self.scenario_elapsed_seconds += self.step_seconds
+                if self.model.heater_on:
+                    self.heater_on_seconds += self.step_seconds
                 self.history.append(self.history_point())
                 stamp = int(time.time() * 1000)
                 self.last_influx_ok = self.influx.write(self.model.snapshot(), str(stamp)) if self.influx.enabled else False
@@ -80,6 +88,11 @@ class State:
                 "weather_source": self.weather.source,
                 "weather_loaded": bool(self.weather.points),
                 "simulation_step_seconds": self.step_seconds,
+                "heating_stats": {
+                    "scenario_elapsed_seconds": self.scenario_elapsed_seconds,
+                    "heater_on_seconds": self.heater_on_seconds,
+                    "heater_on_percent": round(100.0 * self.heater_on_seconds / self.scenario_elapsed_seconds, 1) if self.scenario_elapsed_seconds else 0.0,
+                },
                 "influx": {"enabled": self.influx.enabled, "last_write_ok": self.last_influx_ok, "error": self.influx.last_error},
                 "net": {"connected": self.device.connected, "device_id": self.device.identity, "error": self.device.last_error, "command_log": self.device.command_log_snapshot()},
                 "thermal": self.model.snapshot(),

@@ -5,11 +5,11 @@
 # 2. Adapter /mnt/tank au nom réel de votre pool TrueNAS si vous ajoutez
 #    ensuite des volumes persistants.
 #
-# L'image est publiée par GitHub Container Registry par la release v0.2.6.
+# L'image est publiée par GitHub Container Registry par la release v0.2.7.
 
 services:
   net-thermal-simulator:
-    image: ghcr.io/freakstreet/freakydomos-thermal-simulator:v0.2.6
+    image: ghcr.io/freakstreet/freakydomos-thermal-simulator:v0.2.7
     pull_policy: always
     restart: unless-stopped
     ports:
